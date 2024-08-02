@@ -1,0 +1,80 @@
+#!/usr/bin/env php
+<?php
+
+define('RED', '31');
+define('GREEN', '32');
+define('YELLOW', '33');
+define('BLUE', '34');
+
+function serve($argv) {
+    $port = (isset($argv[2]) && $argv[2]) == '--port' ? explode('=', $argv[2])[1] : '8080';
+
+    $command = "php -S localhost:{$port} -t public";
+
+    shell_exec($command);
+    die();
+}
+
+function colorText($text, $colorCode) {
+    return "\033[" . $colorCode . "m" . $text . "\033[0m";
+}
+
+$commands = explode(':', $argv[1]);
+
+if($commands[0] == 'serve') {
+    serve($argv);
+}
+else if($commands[0] == 'create') {
+    $create_option = $commands[1];
+    $class_name = $argv[2];
+    $display_message = '';
+
+    $filename = '';
+    $file_model = [
+        'controller' => '<?php
+
+namespace app\Controllers;
+
+use core\Controller;
+
+class ' . $class_name . ' extends Controller {
+    
+
+}',
+        'model' => '<?php
+
+namespace app\Models;
+
+use core\Model;
+
+class ' . $class_name . ' extends Model {
+
+}',
+    ];
+
+    switch($create_option) {
+        case 'controller':
+            $filename = __DIR__ . '/app/Controllers/' . $class_name . '.php';
+            $display_message = "Controller {$class_name}";
+            break;
+
+        case 'model':
+            $filename = __DIR__ . '/app/Models/' . $class_name . '.php';
+            $display_message = "Model {$class_name}";
+            break;
+    }
+
+    if(file_exists($filename)) {
+        $display_message .= " already exists!";
+        echo (colorText("$display_message", RED) . PHP_EOL . PHP_EOL);
+        die();
+    }
+
+    $display_message .= " created successfully!";
+    $filename = fopen($filename, 'w');
+    fwrite($filename, $file_model[$create_option]);
+    fclose($filename);
+
+    echo(colorText("$display_message", GREEN) . PHP_EOL . PHP_EOL);
+    die();
+}

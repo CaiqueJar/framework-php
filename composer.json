@@ -1,0 +1,22 @@
+{
+    "name": "user7/framework",
+    "authors": [
+        {
+            "name": "CaiqueJar",
+            "email": "caiquedm11@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "app\\": "app",
+            "core\\": "core"
+        },
+        "files": [
+            "app/Helpers/helpers.php"
+        ]
+    },
+    "require": {
+        "twig/twig": "3.0",
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
